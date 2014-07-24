@@ -105,7 +105,7 @@ def crawl():
 
         soup = BeautifulSoup(htmltext, from_encoding="utf-8")
 
-        #print soup
+        # print soup
 
         results = []
         for tag in soup.select(".title .may-blank"):
@@ -116,3 +116,33 @@ def crawl():
                            query_id=query_id,
                            query_page=query_page,
                            results=results)
+
+
+from flaskext import wtf
+from flaskext.wtf import Form, TextField, TextAreaField, \
+    SubmitField, validators, ValidationError
+
+
+class ContactForm(Form):
+    name = TextField("Name", [validators.Required("Please, enter your name.")])
+    email = TextField(
+        "Email", [validators.Required("Please enter your email address."),
+                  validators.Email("Please enter valid email address.")])
+    subject = TextField(
+        "Subject", [validators.Required("Please enter a subject.")])
+    message = TextAreaField(
+        "Message", [validators.Required("Please enter a message.")])
+    submit = SubmitField("Send")
+
+
+@app.route('/wtform', methods=['GET', 'POST'])
+def wtform():
+    form = ContactForm()
+
+    if request.method == 'POST':
+        if form.validate() is False:
+            return render_template('wtform.html', form=form)
+        else:
+            return "Nice to meet you., " + form.name.data + "!"
+
+        return render_template('wtform.html', form=form)

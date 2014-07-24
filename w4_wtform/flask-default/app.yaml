@@ -22,7 +22,7 @@ handlers:
 - url: /static
   static_dir: apps/static
 
-- url: .*
+- url: .*  # <- indicates all request. Thus, this statement should be declaired at the last line. The upper the definition is, the more priority the definition has. 
   script: apps.app
 
 libraries:
