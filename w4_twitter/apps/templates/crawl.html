@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DC Crawling</title>
+</head>
+<body>
+    <form action="/crawl" method="post">
+        <p>
+            <input type="text" name="query_id" value="kangsora">    
+        </p>
+        <p>
+            <input type="text" name="query_page" value="1">    
+        </p>
+        <input type="Submit" value="Execute">   
+    </form>
+    
+    {% if not query_id == None and not query_page == None %}
+    <p>
+        {{ query_id }}  {{ query_page }}
+    </p>
+    
+        {% for each in results %}
+            <p> {{each}} </p>
+        {% endfor %}
+
+    {% endif %}
+
+</body>
+</html>

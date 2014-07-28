@@ -1,0 +1,43 @@
+application: theta-window-648
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+builtins:
+- appstats: on
+- admin_redirect: on
+- deferred: on
+- remote_api: on
+
+handlers:
+#- url: /favicon.ico
+#  static_files: apps/static/images/favicon.ico
+#  upload: apps/static/images/favicon.ico
+#
+#- url: /robots.txt
+#  static_files: apps/static/robots.txt
+#  upload: apps/static/robots.txt
+
+- url: /static
+  static_dir: apps/static
+
+#- url: /static/js
+#  static_dir: apps/static/js
+#  mime_type: "application/javascript"
+
+#- url: /static/css
+#  static_dir: apps/static/css
+#  mime_type: "text/css"
+
+
+- url: .*  # <- indicates all request. Thus, this statement should be declaired at the last line. The upper the definition is, the more priority the definition has. 
+  script: apps.app
+
+libraries:
+- name: jinja2
+  version: "2.6"
+
+- name: markupsafe
+  version: "0.15"
+
