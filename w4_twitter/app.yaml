@@ -27,6 +27,11 @@ handlers:
   static_dir: apps/static/js
   mime_type: "application/javascript"
 
+- url: /static/img/(.*\.jpg)$
+  static_files: apps/static/img/\1
+  upload: apps/static/img/.*\.jpg$
+  mime_type: "image/jpeg"
+
 - url: /static
   static_dir: apps/static
 

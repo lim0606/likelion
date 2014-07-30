@@ -16,7 +16,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     
     <!-- Bootstrap Lightbox -->
-    <link rel="stylesheet" type="text/css" href="/static/css/lightbox.min.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/lightbox.css">
     <script src="static/js/lightbox.min.js"></script>
     
     <!-- for alert!! -->
@@ -29,6 +29,12 @@
     </style>
 </head>
 <body>
+    <!--
+    <a href="static/img/photo3_small.jpg" data-lightbox="image-1" data-title="My image">
+        Image #1
+    </a>
+    -->
+
     <form action="{{ url_for("upload") }}" enctype="multipart/form-data" method="POST">
         <input type="file" name="photo"> <br>
         <input type="submit" value="submit">
@@ -43,7 +49,7 @@
             <div class="thumbnail">
                 
                 <!-- trigger modal -->
-                <a data-toggle="lightbox" href="#demoLightbox">
+                <a href="{{url}}" data-lightbox="image-2" data-title="My image">
                     <img src="{{url}}" alt="Click to view the lightbox">
                 </a>
 
@@ -61,14 +67,6 @@
         
     </div>
 
-    <!-- Original Image -->
-    <div id="demoLightbox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
-        <div class='lightbox-content'>
-            <!--<img src="image.png">-->
-            <img src="{{url}}">
-            <div class="lightbox-caption"><p>Your caption here</p></div>
-        </div>
-    </div>
     {% endif %}
 
     <br>
