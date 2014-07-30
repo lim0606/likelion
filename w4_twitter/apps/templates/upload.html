@@ -16,8 +16,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     
     <!-- Bootstrap Lightbox -->
-    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap-lightbox.min.css">
-    <script src="static/js/bootstrap-lightbox.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/lightbox.min.css">
+    <script src="static/js/lightbox.min.js"></script>
     
     <!-- for alert!! -->
     <style type='text/css'>
@@ -29,46 +29,13 @@
     </style>
 </head>
 <body>
-    <div>
-        {% for message in form.email.errors %}
-        <div class="flash">{{message}}</div>
-        {% endfor %}
-
-        <form action="{{ url_for('wtform') }}" method=post>
-            <p>
-                {{ form.hidden_tag() }}
-            </p>
-            
-            <p>
-                {{ form.email.label }}
-                {{ form.email }}
-            </p>        
-
-            <p>
-                Message
-                {{ form.message }}
-            </p>
-            
-            <p>
-                {{ form.submit }}
-            </p>        
-        </form>
-    </div>
-
-    <form action="{{ url_for("upload_db") }}" enctype="multipart/form-data" method="POST">
+    <form action="{{ url_for("upload") }}" enctype="multipart/form-data" method="POST">
         <input type="file" name="photo"> <br>
         <input type="submit" value="submit">
     </form> <!-- url_for function stands for url building -->
 
+
     {% if url %}
-    
-    <div id="demoLightbox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
-        <div class='lightbox-content'>
-            <!--<img src="image.png">-->
-            <img src="{{url}}">
-            <div class="lightbox-caption"><p>Your caption here</p></div>
-        </div>
-    </div>
 
     <div class="row">
 
@@ -78,27 +45,12 @@
                 <!--<img data-src="holder.js/300x300" alt="{{url}}"/>-->
                 <!--<img src="{{url}}"/>-->
                 <!--<img src="{{url}}" alt="{{url}}" class="example-image-link">-->
-
-                <div id="demoLightbox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
-                    <div class='lightbox-content'>
-                        <!--<img src="image.png">-->
-                        <img src="{{url}}">
-                        <div class="lightbox-caption"><p>Your caption here</p></div>
-                    </div>
-                </div>
-
-                <!--
-                <div class="media">
-                    <a class="pull-left" href="#">
-                        <img class="media-object" src="{{url}}" alt="{{url}}">
-                    </a>
-                    <div class="media-body">
-                        <h4 class="media-heading">Media heading</h4>
-                        ...
-                    </div>
-                </div>
-                -->
-
+                
+                <!-- Button trigger modal -->
+                <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                    Launch demo modal
+                </button>
+                
                 <div class="caption">
                     <h3>Thumbnail label</h3>
                     <p> Text message is here </p>
@@ -108,9 +60,30 @@
                     </p>
                 </div>
             </div>
+            
         </div>
         
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+          </div>
+          <div class="modal-body">
+            ...
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary">Save changes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     {% endif %}
 
     <br>
