@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block body %}
+
+    <form action="{{ url_for('add_entry') }}" method="post" class="add-entry">
+      <dl>
+        <dt>Title:
+        <dd><input type="text" size=30 name="title">
+        <dt>Text:
+        <dd><textarea name="contents" rows=5 cols=40></textarea>
+        <dd><input type="submit" value="POST">
+        <dd>
+      </dl>
+    </form>
+
+  <ul class="entries">
+  {% for entry in entries %}
+    {% if entry['id'] > 0 %}
+    <li>
+      <div class="clearfix">
+        <h2>{{ entry['id'] }}. {{ entry['title'] }}</h2>
+        <p>{{ entry['contents'] }}</p>
+        <p>{{ entry['datetime'] }}</p>
+        <div class='pull-right'>
+          <a href="{{url_for('like_entry',key=entry['id'])}}">
+            <i class="glyphicon glyphicon-thumbs-up"></i>
+              {{ entry['likecount'] }} 
+          </a>
+          &nbsp;
+          <a href="{{url_for('del_entry',key=entry['id'])}}">
+            <button type="button" class="btn btn-xs btn-danger">Del</button>
+          </a>
+        </div>
+      </div>
+    </li>
+    {% endif %}
+  {% else %}
+    <li> 
+      <em>Unbelievable.  No entries here so far</em>
+    </li>
+  {% endfor %}
+  </ul>
+{% endblock %}
