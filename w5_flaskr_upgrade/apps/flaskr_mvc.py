@@ -19,13 +19,13 @@ def show_entries():
 
 @app.route('/add', methods=['POST'])
 def add_entry():
-    storage = {}
-    storage['id'] = dataStorage.newid()
-    storage['title'] = request.form['title']
-    storage['contents'] = request.form['contents']
-    storage['datetime'] = datetime.now()
-    storage['likecount'] = 0
-    dataStorage.put(storage)
+    entry = {}
+    entry['id'] = dataStorage.newid()
+    entry['title'] = request.form['title']
+    entry['contents'] = request.form['contents']
+    entry['datetime'] = datetime.now()
+    entry['likecount'] = 0
+    dataStorage.put(entry)
     return redirect(url_for('show_entries'))
 
 
@@ -37,7 +37,52 @@ def del_entry(key):
 
 @app.route('/like/<key>', methods=['GET'])
 def like_entry(key):
-    storage = dataStorage.select(key)
-    storage['likecount'] += 1
-    dataStorage.update(key, storage)
+    entry = dataStorage.select(key)
+    entry['likecount'] += 1
+    dataStorage.update(key, entry)
     return redirect(url_for('show_entries'))
+
+
+@app.route('/dislike/<key>', methods=['GET'])
+def dislike_entry(key):
+    entry = dataStorage.select(key)
+    if entry['likecount'] > 0:
+        entry['likecount'] -= 1
+        dataStorage.update(key, entry)
+    return redirect(url_for('show_entries'))
+
+
+@app.route('/edit/<key>', methods=['GET'])
+def edit_entry(key):
+    entry = dataStorage.select(key)
+    return render_template('edit_entry.html', entry=entry)
+
+
+@app.route('/apply_edited/<key>', methods=['POST'])
+def apply_edited_entry(key):
+    entry = dataStorage.select(key)
+    entry['id'] = int(key)
+    entry['title'] = request.form['title']
+    entry['contents'] = request.form['contents']
+    entry['datetime'] = datetime.now()
+    entry['likecount'] = entry['likecount']
+    dataStorage.update(key, entry)
+    return redirect(url_for('show_entries'))
+
+
+from operator import itemgetter
+
+
+@app.route('/top_entries')
+def top_entries():
+    entries = dataStorage.out()  # get all entries
+
+    entries = sorted(entries, key=itemgetter('likecount'), reverse=True)
+    # the same with the above statement
+    # entries = sorted(entries, key=lambda item: item['likecount'], reverse=True)
+
+    # if len(entries) > 3:
+    #     return render_template('top_entries.html', entries=entries[1:3])
+    # else:
+    #     return render_template('top_entries.html', entries=entries)
+    return render_template('top_entries.html', entries=entries)

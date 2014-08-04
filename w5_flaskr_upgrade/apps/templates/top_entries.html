@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  <ul class="entries">
+  {% for entry in entries %}
+    {% if entry['id'] > 0 %}
+    <li>
+      <div class="clearfix">
+        <h2>{{ entry['id'] }}. {{ entry['title'] }}</h2>
+        <p>{{ entry['contents'] }}</p>
+        <p>{{ entry['datetime'] }}</p>
+        <div id='entry_footage'>
+          <span class="label label-default">+{{ entry['likecount'] }} </span>
+          <!-- <span class="badge">+{{ entry['likecount'] }} </span>  -->        
+          &nbsp;
+          <a href="{{url_for('like_entry',key=entry['id'])}}">
+              <span class="glyphicon glyphicon-thumbs-up" style="font-size:0.9em"></span>
+          </a>
+          &nbsp;
+          <a href="{{url_for('dislike_entry',key=entry['id'])}}">
+              <span class="glyphicon glyphicon-thumbs-down" style="font-size:0.9em"></span>
+          </a>
+          <div class='pull-right'>  
+            <a href="{{url_for('edit_entry',key=entry['id'])}}">
+              <button type="button" class="btn btn-xs btn-default">Edit</button>
+            </a>
+            &nbsp;
+            <a href="{{url_for('del_entry',key=entry['id'])}}">
+              <button type="button" class="btn btn-xs btn-danger">Del</button>
+            </a>
+          </div>
+        </div>
+      </div>
+    </li>
+    {% endif %}
+  {% else %}
+    <li> 
+      <em>Unbelievable.  No entries here so far</em>
+    </li>
+  {% endfor %}
+  </ul> 
+{% endblock %}
