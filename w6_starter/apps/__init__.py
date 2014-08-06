@@ -7,6 +7,14 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.migrate import Migrate, MigrateCommand
 from flask.ext.script import Manager
 
+# import cgi
+# import webapp2
+# from google.appengine.ext.webapp.util import run_wsgi_app
+
+# import MySQLdb
+# import os
+# import jinja2
+
 app = Flask('apps')
 app.config.from_object('apps.settings.Production')
 

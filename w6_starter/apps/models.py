@@ -25,3 +25,4 @@ class Comment(db.Model):
     password = db.Column(db.String(255))
     content = db.Column(db.Text())
     date_created = db.Column(db.DateTime(), default=db.func.now())
+

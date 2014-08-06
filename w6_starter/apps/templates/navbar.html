@@ -4,8 +4,10 @@
             <a class="navbar-brand" href="{{ url_for('article_list') }}">Liklion Flaskr</a>
         </div>
         <ul class="nav navbar-nav">
-            <li class="active"><a href="{{ url_for('article_list') }}">타임라인</a></li>
-            <li><a href="#">글쓰기</a></li>
+            <li {% active_tab == 'timeline' %}
+            class="active" {% endif %}><a href="{{ url_for('article_list') }}">Timeline</a></li>
+            <li {% active_tab == 'article_create' %}
+            class="active" {% endif %}><a href="{{ url_for('article_list') }}">Write</a></li>
         </ul>
     </div>
 </nav>

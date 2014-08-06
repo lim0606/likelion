@@ -34,7 +34,11 @@ handlers:
 - url: .*
   script: apps.app
 
-### libraries: import third-party libraries in python 2.7 ###
+# ### libraries: import third-party libraries in python 2.7 ###
+# libraries:
+# - name: MySQLdb
+#   version: "lastest"
+
 libraries:
 - name: jinja2
   version: "2.6"
