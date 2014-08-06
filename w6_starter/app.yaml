@@ -1,4 +1,4 @@
-application: astyfx-personal-project
+application: jhlim-likelion
 version: 0-0-1-proto
 runtime: python27
 api_version: 1
@@ -13,6 +13,21 @@ builtins:
 
 ### handlers: set script or static files by url pattern ###
 handlers:
+#- url: /favicon.ico
+#  static_files: apps/static/images/favicon.ico
+#  upload: apps/static/images/favicon.ico
+#
+#- url: /robots.txt
+#  static_files: apps/static/robots.txt
+#  upload: apps/static/robots.txt
+- url: /static
+  static_dir: apps/static
+  mime_type: "text/css"
+
+- url: /static
+  static_dir: apps/static
+  mime_type: "application/javascript"
+
 - url: /static
   static_dir: apps/static
 
