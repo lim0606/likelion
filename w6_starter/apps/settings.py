@@ -16,5 +16,5 @@ class Production(Config):
     debug = True
     CSRF_ENABLED = False
     ADMIN = "lim0606@gmail.com"
-    SQLALCHEMY_DATABASE_URI = 'mysql+gaerdbms:///blog?instance=jhlim-likelion:personal-blog'
+    SQLALCHEMY_DATABASE_URI = 'mysql+gaerdbms:///blog?instance=jhlim-likelion:w6-starter'
     migration_directory = 'migrations'

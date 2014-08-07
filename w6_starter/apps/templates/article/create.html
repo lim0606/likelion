@@ -12,9 +12,14 @@
             <input type="text" name="author" class="form-control" id="article_create_author" placeholder="Enter an author.">            
         </div>
         <div class="form-group">
+            <label for="article_create_category">Category</label>
+            <textarea name="content" id="article_create_category" class="form-control" placeholder="Enten a category."></textarea>
+        </div>
+        <div class="form-group">
             <label for="article_create_content">Content</label>
             <textarea name="content" id="article_create_content" class="form-control" placeholder="Enten a content."></textarea>
         </div>
+        <button type="submit" class="btn btn-default">Submit</button>
     </form>
 </div>
 {% endblock %}

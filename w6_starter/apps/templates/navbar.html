@@ -4,10 +4,10 @@
             <a class="navbar-brand" href="{{ url_for('article_list') }}">Liklion Flaskr</a>
         </div>
         <ul class="nav navbar-nav">
-            <li {% active_tab == 'timeline' %}
+            <li {% if active_tab == 'timeline' %}
             class="active" {% endif %}><a href="{{ url_for('article_list') }}">Timeline</a></li>
-            <li {% active_tab == 'article_create' %}
-            class="active" {% endif %}><a href="{{ url_for('article_list') }}">Write</a></li>
+            <li {% if active_tab == 'article_create' %}
+            class="active" {% endif %}><a href="{{ url_for('article_create') }}">Write</a></li>
         </ul>
     </div>
 </nav>
