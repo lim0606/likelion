@@ -44,7 +44,6 @@ def article_create():
     if request.method == 'GET':  # if the request method is get type
         return render_template('article/create.html', active_tab='article_create')
     elif request.method == 'POST':
-        
         article_data = request.form
 
         # create instance of Aricle class based on User-provided information
