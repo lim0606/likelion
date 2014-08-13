@@ -47,15 +47,13 @@ def genShips(ship_id):
         direction = 'horizontal'
         for x in range(0, board_size - length + 1):
             for y in range(0, board_size):
-                ship = Ship(id, x, y, direction)
-                ships.append(ship)
+                ships.append(Ship(id, x, y, direction))
 
         direction = 'vertical'
         for x in range(0, board_size):
             for y in range(0, board_size - length + 1):
-                ship = Ship(id, x, y, direction)
-                ships.append(ship)
-        
+                ships.append(Ship(id, x, y, direction))
+
     return ships_all
 
 
@@ -79,14 +77,12 @@ for id in ship_id:
         length = id
 
     ships = ships_all[id]
-    
+
     for ship in ships:
         for (x, y) in ship.pos:
             if result.get_status_at(x, y) == Record.Status.MISSED:
-                ship.
-                # python does not support pointer..... how can i property process them?
+                ship.active = False
 
-    
 
 # Step2: eliminate ships overlapped with positions of other ships
 
@@ -97,11 +93,12 @@ for id in ship_id:
 # Step3: vote the positions of all remaining ships
 board = [0 for x in xrange(board_size * board_size)]
 
-for ships in ships_all: 
+for ships in ships_all:
     for ship in ships:
-        for i in ship.length:
-            (x, y) = ship.pos[i]
-            board[x * board_size + y] += 1
+        if ship.active is True:
+            for i in ship.length:
+                (x, y) = ship.pos[i]
+                board[x * board_size + y] += 1
 
 pos = sorted(range(len(board)), key=lambda k: board[k])
 x = pos % board_size
