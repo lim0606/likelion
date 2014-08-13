@@ -6,9 +6,11 @@ class Ship:
     # pos = [(x1,y1), (x2,y2), (x3, y3)]
     # direction = 'vertical' or 'horizontal'
     # id = 1, 2, 3, 4, or 5
+    # active = True
 
     def __init__(self, id, x, y, direction):
         self.id = id
+        self.active = True
         if id < 3:
             self.length = id + 1
         else:
@@ -78,17 +80,12 @@ for id in ship_id:
 
     ships = ships_all[id]
     
-    direction = 'horizontal'
-    for x in range(0, board_size - length + 1):
-        for y in range(0, board_size):
-            ship = Ship(id, x, y, direction)
-            ships.append(ship)
+    for ship in ships:
+        for (x, y) in ship.pos:
+            if result.get_status_at(x, y) == Record.Status.MISSED:
+                ship.
+                # python does not support pointer..... how can i property process them?
 
-    direction = 'vertical'
-    for x in range(0, board_size):
-        for y in range(0, board_size - length + 1):
-            ship = Ship(id, x, y, direction)
-            ships.append(ship)
     
 
 # Step2: eliminate ships overlapped with positions of other ships
