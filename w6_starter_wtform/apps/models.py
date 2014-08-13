@@ -13,6 +13,7 @@ class Article(db.Model):
     author = db.Column(db.String(255))
     category = db.Column(db.String(255))
     date_created = db.Column(db.DateTime(), default=db.func.now())
+    like = db.Column(db.Integer, default=0)
 
 
 class Comment(db.Model):

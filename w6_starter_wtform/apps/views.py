@@ -124,3 +124,26 @@ def comment_create(article_id):
             flash(u'Your comment was successfully uploaded.', 'success')
         return redirect(url_for('article_detail', id=article_id))
     return render_template('comment/create.html', form=form)
+
+
+#
+# like function
+#
+@app.route('/article/like/<int:id>', methods=['GET', 'POST'])
+def article_like(id):
+    article = Article.query.get(id)
+    article.like += 1
+    db.session.commit()
+    return redirect(url_for('article_list'))
+
+
+#
+# dislike function
+#
+@app.route('/article/dislike/<int:id>', methods=['GET', 'POST'])
+def article_dislike(id):
+    article = Article.query.get(id)
+    if article.like > 0:
+        article.like -= 1
+    db.session.commit()
+    return redirect(url_for('article_list'))

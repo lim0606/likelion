@@ -14,6 +14,16 @@
                 <p>
                     {{ article.content|truncate(50)|safe }}
                 </p>
+
+                <span class="label label-default">+{{ article.like }} </span>
+                &nbsp;
+                <a href="{{url_for('article_like', id=article.id)}}">
+                    <span class="glyphicon glyphicon-thumbs-up" style="font-size:0.9em"></span>
+                </a>
+                &nbsp;
+                <a href="{{url_for('article_dislike', id=article.id)}}">
+                    <span class="glyphicon glyphicon-thumbs-down" style="font-size:0.9em"></span>
+                </a>
             </div>
         {% endfor %}
     {% else %}
