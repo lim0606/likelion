@@ -68,12 +68,24 @@ def guess(record):
         # the supplement matrix indicating each position has been missed or
         # sank
         visited = [0 for x in xrange(board_size * board_size)]
+
+        # the supplement chess board like matrix
+        checker_board = [0 for x in xrange(board_size * board_size)]
+        for y in range(0, board_size):
+            for x in range(y % 2, board_size, 2):
+                checker_board[y * board_size + x] = 1
+        # for x in range(0, 10):
+        #     for y in range(0, 10):
+        #         print "%3d " % checker_board[y * board_size + x],
+        #     print " "
+        record.data["checker_board"] = checker_board
         record.data["visited"] = visited
         record.data["mode"] = mode
         record.data["iter"] = iter
     else:
         iter = record.data["iter"]
         iter += 1
+        checker_board = record.data["checker_board"]
         visited = record.data["visited"]
         mode = record.data["mode"]
         print "iteration: ", iter
@@ -119,7 +131,6 @@ def guess(record):
         #     ships_all = genShips(ship_id)
         # else:  # if there exist log before
         #     ships_all = record.data["ship_id"]
-
         # ship_id = [1, 2, 3, 4, 5]
         ship_id = record.get_remaining_ships()
         ships_all = genShips(ship_id, True)
@@ -157,6 +168,15 @@ def guess(record):
         #     for y in range(0, 10):
         #         print "%3d " % board[y * board_size + x],
         #     print " "
+
+        # Step4: narrowing candidates with checkerboard
+        for x in range(0, 10):
+            for y in range(0, 10):
+                if checker_board[y * board_size + x] == 0:
+                    board[y * board_size + x] = 0
+        # for y in range(0, board_size):
+        #     for x in range(y % 2, board_size, 2):
+        #         board[y * board_size + x] = 0
 
         index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
         x = index[0] % board_size
