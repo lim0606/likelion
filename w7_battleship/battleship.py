@@ -87,7 +87,7 @@ def guess(record):
             for x in range(0, board_size):
                 for y in range(0, board_size):
                     if record.get_status_at(x, y) == Board.Status.HIT:
-                        visited[x * board_size + y] = 1
+                        visited[y * board_size + x] = 1
         elif log["result"] == Record.Status.WIN:
             mode = "win"
             print "I won!"
@@ -97,11 +97,11 @@ def guess(record):
         record.data["visited"] = visited
         record.data["mode"] = mode
         record.data["iter"] = iter
-        for x in range(0, 10):
-            for y in range(0, 10):
-                print "%3d " % visited[x * board_size + y],
-            print " "
-            
+        # for x in range(0, 10):
+        #     for y in range(0, 10):
+        #         print "%3d " % visited[y * board_size + x],
+        #     print " "
+
     # if log["result"] == Record.Status.MISSED or Record.Status.SINK:
     #     mode = "hunt"
     # elif log["result"] == Record.Status.HIT:
@@ -151,12 +151,12 @@ def guess(record):
                     for i in range(0, ship.length):
                         (x, y) = ship.pos[i]
                         # print (x,y)
-                        board[x * board_size + y] += 1
+                        board[y * board_size + x] += 1
 
-        for x in range(0, 10):
-            for y in range(0, 10):
-                print "%3d " % board[x * board_size + y],
-            print " "
+        # for x in range(0, 10):
+        #     for y in range(0, 10):
+        #         print "%3d " % board[y * board_size + x],
+        #     print " "
 
         index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
         x = index[0] % board_size
@@ -173,7 +173,7 @@ def guess(record):
         for ships in ships_all:
             for ship in ships:
                 for (x, y) in ship.pos:
-                    if record.get_status_at(x, y) == Board.Status.HIT and visited[x * board_size + y] == 0:
+                    if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
                         ship.active = True
 
         # Step2: eliminate ships overlapped with missed positions
@@ -196,16 +196,21 @@ def guess(record):
                     for i in range(0, ship.length):
                         (x, y) = ship.pos[i]
                         # print (x,y)
-                        board[x * board_size + y] += 1
+                        board[y * board_size + x] += 1
 
         for x in range(0, 10):
             for y in range(0, 10):
-                print "%3d " % board[x * board_size + y],
+                print "%3d " % board[y * board_size + x],
             print " "
 
         index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
-        x = index[0] % board_size
-        y = index[0] / board_size
+        i = 0
+        x = index[i] % board_size
+        y = index[i] / board_size
+        while record.get_status_at(x, y) != Board.Status.EMPTY:
+            i += 1
+            x = index[i] % board_size
+            y = index[i] / board_size
         # return x, y
 
     elif mode == "win":

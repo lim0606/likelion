@@ -76,11 +76,11 @@ def guess(record):
                 for i in range(0, ship.length):
                     (x, y) = ship.pos[i]
                     # print (x,y)
-                    board[x * board_size + y] += 1
+                    board[y * board_size + x] += 1
 
     for x in range(0,10):
         for y in range(0, 10):
-                print "%3d " % board[x * board_size + y],
+                print "%3d " % board[y * board_size + x],
         print " "
 
     history = record.get_history()
