@@ -186,13 +186,13 @@ def guess(record):
         index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
         
         # Step6: give randomness in selecting the next guess
-        len_random = 2
+        len_random = 5
         i = 0
         while i < board_size * board_size and board[i] != 0:
             # print i
             i += 1
 
-        if i > 2 * len_random:
+        if i > 12 * len_random:
             # print "index : ", index
             index = index[0:len_random]
             # print "index shorten :", index
