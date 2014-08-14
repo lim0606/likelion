@@ -70,22 +70,22 @@ def guess(record):
         visited = [0 for x in xrange(board_size * board_size)]
 
         # the supplement chess board like matrix
-        checker_board = [0 for x in xrange(board_size * board_size)]
-        for y in range(0, board_size):
-            for x in range(y % 2, board_size, 2):
-                checker_board[y * board_size + x] = 1
+        # checker_board = [0 for x in xrange(board_size * board_size)]
+        # for y in range(0, board_size):
+        #     for x in range(y % 2, board_size, 2):
+        #         checker_board[y * board_size + x] = 1
         # for x in range(0, 10):
         #     for y in range(0, 10):
         #         print "%3d " % checker_board[y * board_size + x],
         #     print " "
-        record.data["checker_board"] = checker_board
+        # record.data["checker_board"] = checker_board
         record.data["visited"] = visited
         record.data["mode"] = mode
         record.data["iter"] = iter
     else:
         iter = record.data["iter"]
         iter += 1
-        checker_board = record.data["checker_board"]
+        # checker_board = record.data["checker_board"]
         visited = record.data["visited"]
         mode = record.data["mode"]
         print "iteration: ", iter
@@ -93,7 +93,9 @@ def guess(record):
         if log["result"] == Record.Status.MISSED:
             visited[log["guess"]["y"] * board_size + log["guess"]["x"]] = 1
         elif log["result"] == Record.Status.HIT:
+            print "It was HIT!"
             mode = "target"
+            print "mode: ", mode
         elif log["result"] == Record.Status.SINK:
             mode = "hunt"
             for x in range(0, board_size):
@@ -170,10 +172,10 @@ def guess(record):
         #     print " "
 
         # Step4: narrowing candidates with checkerboard
-        for x in range(0, 10):
-            for y in range(0, 10):
-                if checker_board[y * board_size + x] == 0:
-                    board[y * board_size + x] = 0
+        # for x in range(0, 10):
+        #     for y in range(0, 10):
+        #         if checker_board[y * board_size + x] == 0:
+        #             board[y * board_size + x] = 0
         # for y in range(0, board_size):
         #     for x in range(y % 2, board_size, 2):
         #         board[y * board_size + x] = 0
@@ -190,11 +192,29 @@ def guess(record):
 
         # Step1: leave the ships overlapped with the only hits that are not
         # related to sanked ships.
-        for ships in ships_all:
-            for ship in ships:
-                for (x, y) in ship.pos:
-                    if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
+        n_hits = 0
+        for y in range(0, board_size):
+            for x in range(0, board_size):
+                if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
+                    n_hits += 1
+
+        print "n_hits: ", n_hits
+
+        if n_hits > 1:
+            for ships in ships_all:
+                for ship in ships:
+                    n_hits_tmp = 0
+                    for (x, y) in ship.pos:
+                        if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
+                            n_hits_tmp += 1
+                    if n_hits_tmp == n_hits:
                         ship.active = True
+        else:
+            for ships in ships_all:
+                for ship in ships:
+                    for (x, y) in ship.pos:
+                        if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
+                            ship.active = True
 
         # Step2: eliminate ships overlapped with missed positions
         for ships in ships_all:
@@ -245,5 +265,5 @@ def guess(record):
         y = 0
 
     # record.data["visited"] = visited
-    # print "Guess : ", (x,y)
+    print "Guess : ", (x,y)
     return x, y

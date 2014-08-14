@@ -79,7 +79,7 @@ def guess(record):
         print "iteration: ", iter
 
         if log["result"] == Record.Status.MISSED:
-            visited[log["guess"]["x"] * board_size + log["guess"]["y"]] = 1
+            visited[log["guess"]["y"] * board_size + log["guess"]["x"]] = 1
         elif log["result"] == Record.Status.HIT:
             mode = "target"
         elif log["result"] == Record.Status.SINK:
