@@ -64,15 +64,19 @@ def guess(record):
 
     if len(log) == 0:  # if log equals to {} (empty dictionary)
         mode = "hunt"
-
+        iter = 1
         # the supplement matrix indicating each position has been missed or
         # sank
         visited = [0 for x in xrange(board_size * board_size)]
         record.data["visited"] = visited
         record.data["mode"] = mode
+        record.data["iter"] = iter
     else:
+        iter = record.data["iter"]
+        iter += 1
         visited = record.data["visited"]
         mode = record.data["mode"]
+        print "iteration: ", iter
 
         if log["result"] == Record.Status.MISSED:
             visited[log["guess"]["x"] * board_size + log["guess"]["y"]] = 1
@@ -92,7 +96,12 @@ def guess(record):
 
         record.data["visited"] = visited
         record.data["mode"] = mode
-
+        record.data["iter"] = iter
+        for x in range(0, 10):
+            for y in range(0, 10):
+                print "%3d " % visited[x * board_size + y],
+            print " "
+            
     # if log["result"] == Record.Status.MISSED or Record.Status.SINK:
     #     mode = "hunt"
     # elif log["result"] == Record.Status.HIT:
@@ -102,6 +111,7 @@ def guess(record):
     #     print "I won!"
 
     if mode == "hunt":
+        print "Hunting!!!!!!!!!!!!!!!!!!!!!!!"
         # Step0: generate ships
         # ship_id = record.get_remaining_ships()
         # if len(log) == 0:  # if log equals to {} (empty dictionary)
@@ -143,17 +153,18 @@ def guess(record):
                         # print (x,y)
                         board[x * board_size + y] += 1
 
-        # for x in range(0, 10):
-        #     for y in range(0, 10):
-        #         print "%3d " % board[x * board_size + y],
-        #     print " "
+        for x in range(0, 10):
+            for y in range(0, 10):
+                print "%3d " % board[x * board_size + y],
+            print " "
 
-        index = sorted(range(len(board)), key=lambda k: board[k])
-        x = index[-1] % board_size
-        y = index[-1] / board_size
+        index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
+        x = index[0] % board_size
+        y = index[0] / board_size
         # return x, y
 
     elif mode == "target":
+        print "Targetting!!!!!!!!!!!!!!!!!!!!!!!"
         ship_id = record.get_remaining_ships()
         ships_all = genShips(ship_id, False)
 
@@ -187,14 +198,14 @@ def guess(record):
                         # print (x,y)
                         board[x * board_size + y] += 1
 
-        # for x in range(0, 10):
-        #     for y in range(0, 10):
-        #         print "%3d " % board[x * board_size + y],
-        #     print " "
+        for x in range(0, 10):
+            for y in range(0, 10):
+                print "%3d " % board[x * board_size + y],
+            print " "
 
-        index = sorted(range(len(board)), key=lambda k: board[k])
-        x = index[-1] % board_size
-        y = index[-1] / board_size
+        index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
+        x = index[0] % board_size
+        y = index[0] / board_size
         # return x, y
 
     elif mode == "win":
