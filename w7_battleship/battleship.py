@@ -26,8 +26,11 @@ def guess(record):
                     self.pos.append((x + i, y))
             else:
                 print "Error occurred in initialize Ship class object"
+            # print self.pos
 
     def genShips(ship_id, active):
+        # print "remaining ships: ", ship_id
+        # print "active: ", active
         ship = Ship(1, 0, 0, 'horizontal', active)
         ships = [ship]
         ships_all = [ships]
@@ -52,6 +55,8 @@ def guess(record):
             for x in range(0, board_size):
                 for y in range(0, board_size - length + 1):
                     ships.append(Ship(id, x, y, direction, active))
+
+            ships_all.append(ships)
 
         return ships_all
 
@@ -129,17 +134,23 @@ def guess(record):
         # get_sink_info([ship_id])
         # Step3: vote the positions of all remaining ships
         board = [0 for x in xrange(board_size * board_size)]
-
         for ships in ships_all:
             for ship in ships:
+                # print ship.active
                 if ship.active is True:
-                    for i in ship.length:
+                    for i in range(0, ship.length):
                         (x, y) = ship.pos[i]
+                        # print (x,y)
                         board[x * board_size + y] += 1
 
+        # for x in range(0, 10):
+        #     for y in range(0, 10):
+        #         print "%3d " % board[x * board_size + y],
+        #     print " "
+
         index = sorted(range(len(board)), key=lambda k: board[k])
-        x = index[0] % board_size
-        y = index[0] / board_size
+        x = index[-1] % board_size
+        y = index[-1] / board_size
         # return x, y
 
     elif mode == "target":
@@ -167,17 +178,23 @@ def guess(record):
         # get_sink_info([ship_id])
         # Step3: vote the positions of all remaining ships
         board = [0 for x in xrange(board_size * board_size)]
-
         for ships in ships_all:
             for ship in ships:
+                # print ship.active
                 if ship.active is True:
-                    for i in ship.length:
+                    for i in range(0, ship.length):
                         (x, y) = ship.pos[i]
+                        # print (x,y)
                         board[x * board_size + y] += 1
 
+        # for x in range(0, 10):
+        #     for y in range(0, 10):
+        #         print "%3d " % board[x * board_size + y],
+        #     print " "
+
         index = sorted(range(len(board)), key=lambda k: board[k])
-        x = index[0] % board_size
-        y = index[0] / board_size
+        x = index[-1] % board_size
+        y = index[-1] / board_size
         # return x, y
 
     elif mode == "win":
@@ -192,4 +209,5 @@ def guess(record):
         y = 0
 
     # record.data["visited"] = visited
+    print "Guess : ", (x,y)
     return x, y
