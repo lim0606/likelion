@@ -184,15 +184,21 @@ def guess(record):
 
         # Step5: find the maximum probable position
         index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
-        
+
         # Step6: give randomness in selecting the next guess
-        len_random = 5
+        len_random = int(0.5 * board_size)
+        print "len_random: ", len_random
+        if len_random == 0:
+            len_random = 1
+
         i = 0
         while i < board_size * board_size and board[i] != 0:
             # print i
             i += 1
 
-        if i > 12 * len_random:
+        # check the positions being remained as EMPTY are more than 60% of
+        # total size of board
+        if i > board_size * board_size * 0.6:
             # print "index : ", index
             index = index[0:len_random]
             print "index shorten :", index
@@ -283,5 +289,5 @@ def guess(record):
         y = 0
 
     # record.data["visited"] = visited
-    print "Guess : ", (x,y)
+    print "Guess : ", (x, y)
     return x, y
