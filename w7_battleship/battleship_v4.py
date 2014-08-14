@@ -188,7 +188,7 @@ def guess(record):
         # Step6: give randomness in selecting the next guess
         len_random = 5
         i = 0
-        while i < board_size * board_size and board[i] != 0:
+        while i < board_size * board_size and board[index[i]] != 0:
             # print i
             i += 1
 

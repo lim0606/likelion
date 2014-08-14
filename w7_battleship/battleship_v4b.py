@@ -192,13 +192,13 @@ def guess(record):
             len_random = 1
 
         i = 0
-        while i < board_size * board_size and board[i] != 0:
+        while i < board_size * board_size and board[index[i]] != 0:
             # print i
             i += 1
 
         # check the positions being remained as EMPTY are more than 60% of
         # total size of board
-        if i > board_size * board_size * 0.6:
+        if i > board_size * board_size * 0.85:
             # print "index : ", index
             index = index[0:len_random]
             print "index shorten :", index
