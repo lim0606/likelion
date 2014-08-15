@@ -101,10 +101,17 @@ def guess(record):
             print "mode: ", mode
         elif log["result"] == Record.Status.SINK:
             mode = "hunt"
+            
+            ships_sank = [1,2,3,4,5] - get_remaining_ships()
+            for sid in ships_sank:
+                loc = get_sink_info(sid)
+                # visited[y * board_size + x] = 1
+                visited[location] = 1
+
             for x in range(0, board_size):
                 for y in range(0, board_size):
-                    if record.get_status_at(x, y) == Board.Status.HIT:
-                        visited[y * board_size + x] = 1
+                    if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
+                        mode = "target"
         elif log["result"] == Record.Status.WIN:
             mode = "win"
             print "I won!"
