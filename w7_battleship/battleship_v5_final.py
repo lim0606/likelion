@@ -71,7 +71,7 @@ def guess(record):
         # the supplement matrix indicating each position has been missed or
         # sank
         visited = [0 for x in xrange(board_size * board_size)]
-        multihit = 0
+
         # the supplement chess board like matrix
         # checker_board = [0 for x in xrange(board_size * board_size)]
         # for y in range(0, board_size):
@@ -85,7 +85,6 @@ def guess(record):
         record.data["visited"] = visited
         record.data["mode"] = mode
         record.data["iter"] = iter
-        record.data["multihit"] = multihit
     else:
         iter = record.data["iter"]
         iter += 1
@@ -93,8 +92,6 @@ def guess(record):
         visited = record.data["visited"]
         mode = record.data["mode"]
         print "iteration: ", iter
-
-        multihit = record.data["multihit"]
 
         if log["result"] == Record.Status.MISSED:
             visited[log["guess"]["y"] * board_size + log["guess"]["x"]] = 1
@@ -170,7 +167,7 @@ def guess(record):
                     for i in range(0, ship.length):
                         (x, y) = ship.pos[i]
                         # print (x,y)
-                        board[y * board_size + x] += 1
+                        board[y * board_size + x] += ship.weight
 
         # for x in range(0, 10):
         #     for y in range(0, 10):
@@ -212,118 +209,70 @@ def guess(record):
         x = index[0] % board_size
         y = index[0] / board_size
         # return x, y
-        multihit = 0
 
     elif mode == "target":
         # print "Targetting!!!!!!!!!!!!!!!!!!!!!!!"
         ship_id = record.get_remaining_ships()
         ships_all = genShips(ship_id, False)
 
-        if multihit == 0:
-            # Step1: leave the ships overlapped with the only hits that are not
-            # related to sanked ships.
-            n_hits = 0
-            for y in range(0, board_size):
-                for x in range(0, board_size):
+        # Step1a: leave the ships overlapped with the only hits that are not
+        # related to sanked ships.
+        # n_hits = 0
+        # for y in range(0, board_size):
+        #     for x in range(0, board_size):
+        #         if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
+        #             n_hits += 1
+
+        # print "n_hits: ", n_hits
+
+        # Step1b: count weight!!!
+        for ships in ships_all:
+            for ship in ships:
+                weight = 0
+                for (x, y) in ship.pos:
                     if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
-                        n_hits += 1
-
-            print "n_hits: ", n_hits
-
-            if n_hits > 1:
-                for ships in ships_all:
-                    for ship in ships:
-                        n_hits_tmp = 0
-                        for (x, y) in ship.pos:
-                            if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
-                                n_hits_tmp += 1
-                        if n_hits_tmp == n_hits:
-                            ship.active = True
-            else:
-                for ships in ships_all:
-                    for ship in ships:
-                        for (x, y) in ship.pos:
-                            if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
-                                ship.active = True
-
-            # Step2: eliminate ships overlapped with missed positions
-            for ships in ships_all:
-                for ship in ships:
-                    if ship.active is True:
-                        for (x, y) in ship.pos:
-                            if record.get_status_at(x, y) == Board.Status.MISSED:
-                                ship.active = False
-
-            # get_status_at(x, y)
-            # get_remaining_ships()
-            # get_sink_info([ship_id])
-            # Step3: vote the positions of all remaining ships
-            board = [0 for x in xrange(board_size * board_size)]
-            for ships in ships_all:
-                for ship in ships:
-                    # print ship.active
-                    if ship.active is True:
-                        for i in range(0, ship.length):
-                            (x, y) = ship.pos[i]
-                            # print (x,y)
-                            board[y * board_size + x] += 1
-
-            # for x in range(0, 10):
-            #     for y in range(0, 10):
-            #         print "%3d " % board[y * board_size + x],
-            #     print " "
-
-            index = sorted(
-                range(len(board)), key=lambda k: board[k], reverse=True)
-            i = 0
-            x = index[i] % board_size
-            y = index[i] / board_size
-
-            while record.get_status_at(x, y) != Board.Status.EMPTY:
-                i += 1
-                x = index[i] % board_size
-                y = index[i] / board_size
-
-            if i > n_hits:
-                multihit = 1
-
-        if multihit == 1:
-            ships_all = genShips(ship_id, False)
-            for ships in ships_all:
-                for ship in ships:
+                        weight += 1
+                        ship.active = True
+                if weight > 1:
+                    ship.weight = weight
+        
+        # Step2: eliminate ships overlapped with missed positions
+        for ships in ships_all:
+            for ship in ships:
+                if ship.active is True:
                     for (x, y) in ship.pos:
-                        if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
-                            ship.active = True
+                        if record.get_status_at(x, y) == Board.Status.MISSED:
+                            ship.active = False
 
-            # Step2: eliminate ships overlapped with missed positions
-            for ships in ships_all:
-                for ship in ships:
-                    if ship.active is True:
-                        for (x, y) in ship.pos:
-                            if record.get_status_at(x, y) == Board.Status.MISSED:
-                                ship.active = False
+        # get_status_at(x, y)
+        # get_remaining_ships()
+        # get_sink_info([ship_id])
+        # Step3: vote the positions of all remaining ships
+        board = [0 for x in xrange(board_size * board_size)]
+        for ships in ships_all:
+            for ship in ships:
+                # print ship.active
+                if ship.active is True:
+                    for i in range(0, ship.length):
+                        (x, y) = ship.pos[i]
+                        # print (x,y)
+                        board[y * board_size + x] += ship.weight
 
-            # get_status_at(x, y)
-            # get_remaining_ships()
-            # get_sink_info([ship_id])
-            # Step3: vote the positions of all remaining ships
-            board = [0 for x in xrange(board_size * board_size)]
-            for ships in ships_all:
-                for ship in ships:
-                    # print ship.active
-                    if ship.active is True:
-                        for i in range(0, ship.length):
-                            (x, y) = ship.pos[i]
-                            # print (x,y)
-                            board[y * board_size + x] += 1
+        # for x in range(0, 10):
+        #     for y in range(0, 10):
+        #         print "%3d " % board[y * board_size + x],
+        #     print " "
 
-            index = sorted(
-                range(len(board)), key=lambda k: board[k], reverse=True)
-            i = 0
+        index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
+        i = 0
+        x = index[i] % board_size
+        y = index[i] / board_size
+        while record.get_status_at(x, y) != Board.Status.EMPTY:
+            i += 1
             x = index[i] % board_size
             y = index[i] / board_size
-
         # return x, y
+
     elif mode == "win":
         print "I won!"
         # return 0, 0
@@ -336,6 +285,5 @@ def guess(record):
         y = 0
 
     # record.data["visited"] = visited
-    record.data["multihit"] = multihit
     print "Guess : ", (x, y)
     return x, y
