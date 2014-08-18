@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, request, url_for, redirect, flash
 from apps import app, db
-from models import Article, Comment
+from models import (
+    Article,
+    Comment,
+    User
+)
 from sqlalchemy import desc
-from apps.forms import ArticleForm, CommentForm
-
+from apps.forms import ArticleForm, CommentForm, JoinForm, LoginForm
+from werkzeug.security import generate_password_hash, \
+    check_password_hash
 
 #
 # @index & article list
 #
+
+
 @app.route('/', methods=['GET'])
 def article_list():
     # data that will be delivered to html file
@@ -37,9 +44,36 @@ def server_error(e):
 
 
 #
+# @Join controllers
+#
+@app.route('/user/join/', methods=['GET', 'POST'])
+def user_join():
+    form = JoinForm()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            user = User(
+                email=form.email.data,
+                password=generate_password_hash(form.password.data),
+                name=form.name.data
+            )
+
+            db.session.add(user)
+            db.session.commit()
+
+            flash(u'You successfully signed up.', 'success')
+            return redirect(url_for('article_list'))
+
+    # if GET
+    return render_template('user/join.html', form=form, active_tab='user_join')
+
+
+#
 # article controllers
 #
 # Create new article
+
+
 @app.route('/article/create/', methods=['GET', 'POST'])
 def article_create():
     form = ArticleForm()

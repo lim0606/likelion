@@ -8,6 +8,14 @@
             class="active" {% endif %}><a href="{{ url_for('article_list') }}">Timeline</a></li>
             <li {% if active_tab == 'article_create' %}
             class="active" {% endif %}><a href="{{ url_for('article_create') }}">Write</a></li>
+            <li {% if active_tab == 'user_join' %} class="active"{% endif %}><a href="{{ url_for('user_join') }}">Join</a></li>
+            {% if g.user_name != None %}
+                <li> Hello, {{ g.user_name }}! <a href="{{ url_for('log_out') }}"><button>logout</button></a></li>
+            {% else %}
+                <li{% if active_tab == 'log_in' %} class="active"{% endif %}>
+                    <a href="{{ url_for('log_in') }}">Login</a>
+                </li>   
+            {% endif %}
         </ul>
     </div>
 </nav>
