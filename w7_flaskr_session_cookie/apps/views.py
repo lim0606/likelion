@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, request, url_for, redirect, flash
+from flask import render_template, request, url_for, redirect, flash, session, g
 from apps import app, db
 from models import (
     Article,
@@ -68,33 +68,76 @@ def user_join():
     return render_template('user/join.html', form=form, active_tab='user_join')
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def log_in():
+    form = LoginForm()
+
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            email = form.email.data
+            pwd = form.password.data
+
+            user = User.query.get(email)
+            if user is None:
+                flash(u'The email is not existed.', 'danger')
+            elif not check_password_hash(user.password, pwd):
+                flash(u'Password is not matched.', 'danger')
+            else:
+                session.permanent = True
+                session['user_email'] = user.email
+                session['user_name'] = user.name
+
+                flash(u'Login completed.', 'success')
+                return redirect(url_for('article_list'))
+    # if GET
+    return render_template('user/login.html', form=form, active_tab='log_in')
+
+
+@app.route('/logout')
+def log_out():
+    session.clear()
+    # if GET
+    return redirect(url_for('article_list'))
+
+
+@app.before_request
+def before_request():
+    g.user_name = None
+
+    if 'user_email' in session:
+        g.user_email = session['user_email']
+        g.user_name = session['user_name']
+
+
 #
 # article controllers
 #
 # Create new article
-
-
 @app.route('/article/create/', methods=['GET', 'POST'])
 def article_create():
-    form = ArticleForm()
-    if request.method == 'POST':
-        if form.validate_on_submit():
-            # create instance of Article class based on User-provided
-            # information
-            article = Article(
-                title=form.title.data,
-                author=form.author.data,
-                category=form.category.data,
-                content=form.content.data
-            )
+    if g.user_name == None:
+        flash(u'Please login.', 'danger')
+        return redirect(url_for('log_in'))
+    else:
+        form = ArticleForm()
+        if request.method == 'POST':
+            if form.validate_on_submit():
+                # create instance of Article class based on User-provided
+                # information
+                article = Article(
+                    title=form.title.data,
+                    author=form.author.data,
+                    category=form.category.data,
+                    content=form.content.data
+                )
 
-            db.session.add(article)
-            db.session.commit()
+                db.session.add(article)
+                db.session.commit()
 
-            flash(u'Your article was successfully uploaded.', 'success')
-            return redirect(url_for('article_list'))
+                flash(u'Your article was successfully uploaded.', 'success')
+                return redirect(url_for('article_list'))
 
-    return render_template('article/create.html', active_tab='article_create', form=form)
+        return render_template('article/create.html', active_tab='article_create', form=form)
 
 
 # Show article in detail
