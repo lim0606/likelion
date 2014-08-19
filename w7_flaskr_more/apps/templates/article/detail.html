@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block contents %}
+    <div class="llArticleDetail">
+        <h1>Article detail</h1>
+        <h1 class="panel panel-primary">
+            <div class="panel-heading">
+                <h3 class="panel-title">
+                    Title : {{ article.title }} / Author: {{ article.author }} <span class="float-right">{{ article.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                </h3>
+            </div>
+            <div class="panel-body">
+                {{ article.content|safe }}
+            </div>
+        </h1>
+    </div>
+
+    <div class="llCommentLis">
+        {% if comments %}
+            {% for comment in comments %}
+                <div class="well well-sm">
+                    <span class="badge"> {{ loop.index }} </span> {{ comment.content }}
+                    <span class="float-right">
+                        <span class="label label-primary">{{ comment.author }}</span>
+                        <small>
+                            <a href="mailto:{{ comment.email }}">{{ comment.email }}</a> <em> {{ comment.date_created.strftime('%Y-%m-%d %H:%M:%S') }} </em>
+                        </small>
+                    </span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-list">
+                There is no comment.
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="bottomButtons">
+        <a href="{{ url_for('article_list') }}" class="btn btn-primary">List</a>
+        <a href="{{ url_for('comment_create', article_id=article.id) }}" class="btn btn-info">Comment</a>
+        <a href="{{ url_for('article_update', id=article.id) }}" class="btn btn-success">Edit</a>
+        <a href="{{ url_for('article_delete', id=article.id) }}" class="btn btn-danger
+        ">Delete</a>
+    </div>
+{% endblock %}
