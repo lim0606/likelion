@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, request, url_for, redirect, flash, session, g
+from flask import render_template, request, url_for, redirect, flash, session, g, jsonify
 from apps import app, db
 from models import (
     Article,
@@ -20,12 +20,39 @@ from werkzeug.security import generate_password_hash, \
 def article_list():
     # data that will be delivered to html file
     context = {}
+    rows = max(Article.query.count() - 5, 5)
 
     # 1. Sort(order) all data in 'article' table (data are created via Article class' instance)
     # 2. Get all data (sorted)
     context['article_list'] = Article.query.order_by(
-        desc(Article.date_created)).all()
+        desc(Article.date_created)).limit(rows)
     return render_template("home.html", context=context, active_tab='timeline')
+
+
+@app.route('/rows')
+def article_rows():
+    rows = Article.query.count()
+    return jsonify(rows=rows)
+
+
+@app.route('/more')
+def article_more():
+    last_article_id = request.args.get('last_article_id', 0, type=int)
+    
+    article_list = Article.query.filter(Article.id < last_article_id).order_by(
+        desc(Article.date_created)).limit(5)
+
+    article_result = []
+    for article in article_list:
+        article_result.append({'id': article.id,
+                               'title': article.title,
+                               'content': article.content,
+                               'author': article.author,
+                               'category': article.category,
+                               'date_created': article.date_created,
+                               })
+    # return jsonify(article_list=article_result, count=len(article_result))
+    return jsonify(article_list=article_result, count=last_article_id)
 
 
 #

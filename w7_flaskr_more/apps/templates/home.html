@@ -4,7 +4,7 @@
 <div class="llArticlelist">
     {% if context.article_list %}
         {% for article in context.article_list %}
-            <div class="well" id="article_{{ article.id }}">
+            <div class="well" id="article_{{ article.id }}" article_id="{{ article.id }}">
                 <h1>
                     <a href="{{ url_for('article_detail', id=article.id) }}">{{ article.title }}</a>
                 </h1>
@@ -26,6 +26,15 @@
                 </a>
             </div>
         {% endfor %}
+
+        <div class="results"></div>
+        <div align="center" id="morebtn">
+            <button class="load_more" id="load_more_button">More article</button>
+            <div class="animation_image" style="display:none;">
+                Loading ...
+            </div>
+        </div>
+        
     {% else %}
         <div class="no-list">
             There is no article. Please write a new article.
