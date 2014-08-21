@@ -77,8 +77,8 @@ def guess(record):
         # for y in range(0, board_size):
         #     for x in range(y % 2, board_size, 2):
         #         checker_board[y * board_size + x] = 1
-        # for x in range(0, 10):
-        #     for y in range(0, 10):
+        # for x in range(0, board_size):
+        #     for y in range(0, board_size):
         #         print "%3d " % checker_board[y * board_size + x],
         #     print " "
         # record.data["checker_board"] = checker_board
@@ -94,24 +94,112 @@ def guess(record):
         print "iteration: ", iter
 
         if log["result"] == Record.Status.MISSED:
+            print "It was MISSED!"
             visited[log["guess"]["y"] * board_size + log["guess"]["x"]] = 1
         elif log["result"] == Record.Status.HIT:
             print "It was HIT!"
             mode = "target"
             print "mode: ", mode
         elif log["result"] == Record.Status.SINK:
+            print "It was SANK!"
             mode = "hunt"
             
-            ships_sank = [1,2,3,4,5] - get_remaining_ships()
-            for sid in ships_sank:
-                loc = get_sink_info(sid)
-                # visited[y * board_size + x] = 1
-                visited[location] = 1
+            # ships_sank = [1,2,3,4,5] - record.get_remaining_ships()
+            for ship_sank in record.get_sink_info():
+                sid = ship_sank['sink']
+                loc = ship_sank['location']
+                if sid < 3:
+                    length = sid + 1
+                else:
+                    length = sid
 
+                # how to collectly mark the sank ships???
+                # visited[loc["y"] * board_size + loc["x"]] = 1
+                # this implementation is imperfect
+                # up
+                # length_tmp = 0
+                # for l in range(0, length):
+                #     if record.get_status_at(loc["x"], loc["y"] + l) == Board.Status.HIT and visited[(loc["y"] + l) * board_size + loc["x"]] == 0:
+                #         length_tmp += 1
+                #         # visited[(loc["y"]+l) * board_size + loc["x"]] = 1
+                #     else:
+                #         l = length
+                # if length_tmp == length:
+                #     for l in range(0, length):
+                #         visited[(loc["y"] + l) * board_size + loc["x"]] = 1
+                
+                # # down
+                # length_tmp = 0
+                # for l in range(0, length):
+                #     if record.get_status_at(loc["x"], loc["y"] - l) == Board.Status.HIT and visited[(loc["y"] - l) * board_size + loc["x"]] == 0:
+                #         length_tmp += 1
+                #         # visited[(loc["y"]+l) * board_size + loc["x"]] = 1
+                #     else:
+                #         l = length
+                # if length_tmp == length:
+                #     for l in range(0, length):
+                #         visited[(loc["y"] - l) * board_size + loc["x"]] = 1
+        
+                # # right
+                # length_tmp = 0
+                # for l in range(0, length):
+                #     if record.get_status_at(loc["x"] + l, loc["y"]) == Board.Status.HIT and visited[loc["y"] * board_size + loc["x"] + l] == 0:
+                #         length_tmp += 1
+                #         # visited[(loc["y"]+l) * board_size + loc["x"]] = 1
+                #     else:
+                #         l = length
+                # if length_tmp == length:
+                #     for l in range(0, length):
+                #         visited[loc["y"] * board_size + loc["x"] + l] = 1
+                        
+                
+                # # left
+                # length_tmp = 0
+                # for l in range(0, length):
+                #     if record.get_status_at(loc["x"] - l, loc["y"]) == Board.Status.HIT and visited[loc["y"] * board_size + loc["x"] - l] == 0:
+                #         length_tmp += 1
+                #         # visited[(loc["y"]+l) * board_size + loc["x"]] = 1
+                #     else:
+                #         l = length
+                # if length_tmp == length:
+                #     for l in range(0, length):
+                #         visited[loc["y"] * board_size + loc["x"] - l] = 1
+
+                            
+            # for sid in [1,2,3,4,5]:
+            #     if sid not in record.get_remaining_ships(): # if sid is a ship sank
+            #         asdf = record.get_sink_info()
+            #         print "asdf: ", asdf
+            #         loc = record.get_sink_info(sid)
+            #         # visited[y * board_size + x] = 1
+            #         print "loc: ", loc
+            #         visited[loc["y"] * board_size + loc["x"]] = 1
+                
             for x in range(0, board_size):
                 for y in range(0, board_size):
                     if record.get_status_at(x, y) == Board.Status.HIT and visited[y * board_size + x] == 0:
                         mode = "target"
+                        print "what the f**k?!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+                        print "hunt > target (%d, %d)" % (x, y)
+
+            # if mode is "target":
+            #     board = [0 for x in xrange(board_size * board_size)]
+            #     ship_id = record.get_remaining_ships()
+            #     ships_all = genShips(ship_id, True)
+            #     for ships in ships_all:
+            #         for ship in ships:
+            #             # print ship.active
+            #             if ship.active is True:
+            #                 for i in range(0, ship.length):
+            #                     (x, y) = ship.pos[i]
+            #                     # print (x,y)
+            #                     board[y * board_size + x] += ship.weight
+            #     print "what the f**k?!"
+            #     for x in range(0, board_size):
+            #         for y in range(0, board_size):
+            #             print "%3d " % board[y * board_size + x],
+            #         print " "
+
         elif log["result"] == Record.Status.WIN:
             mode = "win"
             print "I won!"
@@ -121,8 +209,8 @@ def guess(record):
         record.data["visited"] = visited
         record.data["mode"] = mode
         record.data["iter"] = iter
-        # for x in range(0, 10):
-        #     for y in range(0, 10):
+        # for x in range(0, board_size):
+        #     for y in range(0, board_size):
         #         print "%3d " % visited[y * board_size + x],
         #     print " "
 
@@ -135,7 +223,7 @@ def guess(record):
     #     print "I won!"
 
     if mode == "hunt":
-        # print "Hunting!!!!!!!!!!!!!!!!!!!!!!!"
+        print "Hunting!!!!!!!!!!!!!!!!!!!!!!!"
         # Step0: generate ships
         # ship_id = record.get_remaining_ships()
         # if len(log) == 0:  # if log equals to {} (empty dictionary)
@@ -176,14 +264,14 @@ def guess(record):
                         # print (x,y)
                         board[y * board_size + x] += ship.weight
 
-        # for x in range(0, 10):
-        #     for y in range(0, 10):
+        # for x in range(0, board_size):
+        #     for y in range(0, board_size):
         #         print "%3d " % board[y * board_size + x],
         #     print " "
 
         # Step4: narrowing candidates with checkerboard
-        # for x in range(0, 10):
-        #     for y in range(0, 10):
+        # for x in range(0, board_size):
+        #     for y in range(0, board_size):
         #         if checker_board[y * board_size + x] == 0:
         #             board[y * board_size + x] = 0
         # for y in range(0, board_size):
@@ -194,7 +282,8 @@ def guess(record):
         index = sorted(range(len(board)), key=lambda k: board[k], reverse=True)
 
         # Step6: give randomness in selecting the next guess
-        len_random = int(0.5 * board_size)
+        # len_random = int(0.5 * board_size)
+        len_random = 1
         print "len_random: ", len_random
         if len_random == 0:
             len_random = 1
@@ -218,7 +307,7 @@ def guess(record):
         # return x, y
 
     elif mode == "target":
-        # print "Targetting!!!!!!!!!!!!!!!!!!!!!!!"
+        print "Targetting!!!!!!!!!!!!!!!!!!!!!!!"
         ship_id = record.get_remaining_ships()
         ships_all = genShips(ship_id, False)
 
@@ -265,8 +354,8 @@ def guess(record):
                         # print (x,y)
                         board[y * board_size + x] += ship.weight
 
-        # for x in range(0, 10):
-        #     for y in range(0, 10):
+        # for x in range(0, board_size):
+        #     for y in range(0, board_size):
         #         print "%3d " % board[y * board_size + x],
         #     print " "
 
@@ -291,6 +380,11 @@ def guess(record):
         x = 0
         y = 0
 
-    # record.data["visited"] = visited
+    
+    print "visited"
+    for xx in range(0, board_size):
+        for yy in range(0, board_size):
+            print "%3d " % visited[yy * board_size + xx],
+        print " "
     print "Guess : ", (x, y)
     return x, y
