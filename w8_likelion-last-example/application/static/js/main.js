@@ -18,7 +18,21 @@ $(function() {
 	$loginPage = $('.login.page');
         $chatPage = $('.chat.page');
 
-    var username;
+    // var username;
+    var username,
+	connected = false,
+	typing = false,
+	lastTypingTime;
+
+    var user_id = (function () {
+	var text = "";
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	for (var i = 0; i < 10; i++)
+	    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+	return text;
+    })();
 
     $usernameInput.focus();
     
@@ -50,6 +64,17 @@ $(function() {
 	broadcast.bind('user_joined', function(data) {
 	    log(data.username + ' joined');
 	});
+
+	broadcast.bind('typing', function(data) {
+	    if (data['user_id'] == user_id) return;
+	    addChatTyping(data);
+	});
+
+	//Whenever the server emits 'stop typing', kill the typting message
+	broadcast.bind('stop_typing', function(data) {
+	    if (data['user_id'] == user_id) return;
+	    removeChatTyping(data);
+	});
     }
 
     // window.console.log("2asdfasdfasdf");
@@ -68,6 +93,10 @@ $(function() {
 	    .append($messageBodyDiv)
 	    .data('username', data.username);
 
+	if (data.typing) {
+	    $messageDiv.hide().fadeIn(150);
+	}
+	
 	addMessageElement($messageDiv);
     }
 
@@ -116,6 +145,7 @@ $(function() {
 	    // $inputMessage.focus();
 	    $.post("/api/start", {
 		'username': __username,
+		'user_id': user_id,
 	    }, function(data) {
 		if (data.status == 0) {
 		    username = __username;
@@ -140,7 +170,41 @@ $(function() {
 	var el = '<li class="log">' + message + '</li>';
 	addMessageElement(el, options);
     }
-    
+
+    // typing methods
+    function addChatTyping(data) {
+	data.typing = true;
+	data.message = 'is typing';
+	$('.typing.message').remove();
+	addChatMessage(data);
+    }
+
+    function removeChatTyping(data) {
+	$('.typing.message').fadeOut(function() {
+	    $(this).remove();
+	});
+    }
+
+    function updateTyping() {
+	var TYPING_TIMER_LENGTH = 400; // ms
+	if (connected) {
+	    if (!typing) {
+		typing = true;
+		$.post('/api/call/typing');
+	    }
+	    lastTypingTime = (new Date()).getTime();
+
+	    setTimeout(function(){
+		var typingTimer = (new Date()).getTime();
+		var timeDiff = typingTimer - lastTypingTime;
+		if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
+		    $.post('/api/call/stop_typing');
+		    typing = false;
+		}
+	    }, TYPING_TIMER_LENGTH);
+	}
+    }
+    	
     $window.keydown(function(event) {
 	// When the client has ENTER on their keyboard
 	if (event.which == 13) {
@@ -152,5 +216,9 @@ $(function() {
 		$usernameInput.blur();
 	    }
 	}
+    });
+
+    $inputMessage.on('input', function() {
+	updateTyping();
     });
 });
