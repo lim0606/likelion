@@ -7,10 +7,11 @@ Pusher.log = function(message) {
 };
 */
 $(function() {
-    var pusher = new Pusher(PUSHER_KEY),
-	testChannel = pusher.subscribe('test_channel'),
-	broadcast = pusher.subscribe('br'),
-	$window = $(window),
+    // var pusher = new Pusher(PUSHER_KEY),
+    // 	testChannel = pusher.subscribe('test_channel'),
+    // 	broadcast = pusher.subscribe('br'),
+    // 	$window = $(window),
+    var $window = $(window),
 	$usernameInput = $('.usernameInput[name=username]'),
 	$messages = $('.messages'), // new jQuery object having class 'messages'
         $inputMessage = $('.inputMessage'),
@@ -32,10 +33,24 @@ $(function() {
     });
     */
     
-    broadcast.bind('new_message', function(data) {
-	// data['username'] = "Dongwoo";
-	addChatMessage(data);
-    });
+    // broadcast.bind('new_message', function(data) {
+    // 	// data['username'] = "Dongwoo";
+    // 	addChatMessage(data);
+    // });
+
+    function startPusher() {
+	var pusher = new Pusher(PUSHER_KEY),
+	    testChannel = pusher.subscribe('test_channel'),
+	    broadcast = pusher.subscribe('br');
+
+	broadcast.bind('new_message', function(data) {
+	    addChatMessage(data);
+	});
+
+	broadcast.bind('user_joined', function(data) {
+	    log(data.username + ' joined');
+	});
+    }
 
     // window.console.log("2asdfasdfasdf");
     
@@ -95,11 +110,35 @@ $(function() {
 
 	// If the username is valid
 	if (__username) {
-	    username = __username;
-	    $loginPage.fadeOut();
-	    $chatPage.show();
-	    $inputMessage.focus();
+	    // username = __username;
+	    // $loginPage.fadeOut();
+	    // $chatPage.show();
+	    // $inputMessage.focus();
+	    $.post("/api/start", {
+		'username': __username,
+	    }, function(data) {
+		if (data.status == 0) {
+		    username = __username;
+		    $loginPage.fadeOut();
+		    $chatPage.show();
+		    $inputMessage.focus();
+
+		    startPusher();
+		    connected = true;
+		    // Display the welcome message
+		    var message = "Welcome to Chat &mdash; ";
+		    log(message);
+		} else {
+		    alert("error");
+		}
+	    }, "json"
+          );
 	}
+    }
+    
+    function log(message, options) {
+	var el = '<li class="log">' + message + '</li>';
+	addMessageElement(el, options);
     }
     
     $window.keydown(function(event) {

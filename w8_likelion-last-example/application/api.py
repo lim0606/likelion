@@ -10,6 +10,7 @@ p = Pusher(
     secret=PUSHER_SECRET
 )
 
+
 @app.route('/api/echo', methods=["GET", "POST"])
 def test_message():
     data = request.form
@@ -22,6 +23,19 @@ def emit(action, data, broadcast=False):
     else:
         p['private'].trigger(action, data)
 
+        
+@app.route('/api/start', methods=["POST"])
+def api_start():
+    data = request.form
+    username = data['username']
+
+    emit('user_joined', {
+        'username': username,
+        }, broadcast=True)
+
+    return jsonify({"status": 0})
+
+    
 @app.route('/api/call/<action_name>',methods=["POST"])
 def api_call(action_name):
     data = request.form
