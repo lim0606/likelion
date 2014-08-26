@@ -11,10 +11,16 @@ $(function() {
 	testChannel = pusher.subscribe('test_channel'),
 	broadcast = pusher.subscribe('br'),
 	$window = $(window),
+	$usernameInput = $('.usernameInput[name=username]'),
 	$messages = $('.messages'), // new jQuery object having class 'messages'
         $inputMessage = $('.inputMessage'),
-        chatPage = $('.chat.page');
+	$loginPage = $('.login.page');
+        $chatPage = $('.chat.page');
 
+    var username;
+
+    $usernameInput.focus();
+    
     /*
     //$.post는 아래의 형태와 같습니다. 
     $.ajax({
@@ -25,45 +31,13 @@ $(function() {
 	dataType: dataType
     });
     */
-    var initial_delay = 1500;
-    setTimeout(function () {
-	addChatMessage({'username': 'Duhee', 'message': 'Hello!'});
-    }, initial_delay + 500)
-    setTimeout(function () {
-	addChatMessage({'username': 'Jinho', 'message': 'Hello!'});
-    }, initial_delay + 1000)
-    setTimeout(function () {
-	addChatMessage({'username': 'Jinho', 'message': 'Hey Duhee, I heard that you are practicing crying selfie.'});
-    }, initial_delay + 1500)
-    setTimeout(function () {
-	addChatMessage({'username': 'Duhee', 'message': '??????!!!!!!!!!!!!'});
-    }, initial_delay + 2000)
-
-    // window.console.log("1asdfasdf");
     
-    // testChannel.bind('echo', function(data) {
     broadcast.bind('new_message', function(data) {
-	data['username'] = "Dongwoo";
+	// data['username'] = "Dongwoo";
 	addChatMessage(data);
     });
 
     // window.console.log("2asdfasdfasdf");
-    
-/*    setTimeout(function () {
-	// window.console.log("asdf");
-	$.post('/api/echo', {"message": "Hello World!"});
-    }, initial_delay + 4000)
-    setTimeout(function () {
-	$.post('/api/echo', {"message": "I'd like to have a fried chicken."});
-    }, initial_delay + 5000)
-    setTimeout(function () {
-	$.post('/api/echo', {"message": "When is it comming? Isn't it arrived yet?"});
-    }, initial_delay + 6000)
-    setTimeout(function () {
-	$.post('/api/echo', {"message": "Hey Duhee bro! Please let me have some fried chicken!"});
-    }, initial_delay + 7000)
-*/
-    // window.console.log("3asdfasdf"); 
     
     function addChatMessage(data) {
 	var $usernameDiv = $('<span class="username"></span>');
@@ -109,14 +83,35 @@ $(function() {
 	if (message) {
 	    $inputMessage.val('');
 	    // $.post('/api/echo', {"message": message});
-	    $.post('/api/call/new_message', {"message": message});
+	    $.post('/api/call/new_message', {
+		"message": message,
+		"username": username
+	    });
 	}
     }
 
+    function setUsername() {
+	var __username = $usernameInput.val().trim();
+
+	// If the username is valid
+	if (__username) {
+	    username = __username;
+	    $loginPage.fadeOut();
+	    $chatPage.show();
+	    $inputMessage.focus();
+	}
+    }
+    
     $window.keydown(function(event) {
 	// When the client has ENTER on their keyboard
 	if (event.which == 13) {
-	    sendMessage();
+	    // sendMessage();
+	    if (username) {
+		sendMessage();
+	    } else {
+		setUsername();
+		$usernameInput.blur();
+	    }
 	}
     });
 });

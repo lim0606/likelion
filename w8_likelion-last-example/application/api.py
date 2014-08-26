@@ -33,6 +33,7 @@ def api_call(action_name):
 def emit_new_message(data):
     emit('new_message', {
         'message': data['message'],
+        'username': data['username'],
         }, broadcast=True)
 
 
