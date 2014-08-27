@@ -13,6 +13,7 @@ $(function() {
     // 	$window = $(window),
     var $window = $(window),
 	$usernameInput = $('.usernameInput[name=username]'),
+        $passwordInput = $('.usernameInput[name=password]'),
 	$messages = $('.messages'), // new jQuery object having class 'messages'
         $inputMessage = $('.inputMessage'),
 	$loginPage = $('.login.page');
@@ -120,7 +121,7 @@ $(function() {
 	return "hsl(" + index + ", 77%, 60%)";
     }
 
-    function sendMessage () {
+    function sendMessage() {
 	var message = $inputMessage.val().trim();
 
 	// if ther is a non-empty message
@@ -136,19 +137,18 @@ $(function() {
 
     function setUsername() {
 	var __username = $usernameInput.val().trim();
-
+	var __password = $passwordInput.val().trim();
+	
 	// If the username is valid
-	if (__username) {
-	    // username = __username;
-	    // $loginPage.fadeOut();
-	    // $chatPage.show();
-	    // $inputMessage.focus();
-	    $.post("/api/start", {
+	if (__username && __password) {
+	    $.post("/api/trylogin", {
 		'username': __username,
+		'password': __password,
 		'user_id': user_id,
 	    }, function(data) {
 		if (data.status == 0) {
 		    username = __username;
+		    window.console.log(__username); 
 		    $loginPage.fadeOut();
 		    $chatPage.show();
 		    $inputMessage.focus();
@@ -159,7 +159,7 @@ $(function() {
 		    var message = "Welcome to Chat &mdash; ";
 		    log(message);
 		} else {
-		    alert("error");
+		    alert("fail to login");
 		}
 	    }, "json"
           );
@@ -208,7 +208,6 @@ $(function() {
     $window.keydown(function(event) {
 	// When the client has ENTER on their keyboard
 	if (event.which == 13) {
-	    // sendMessage();
 	    if (username) {
 		sendMessage();
 	    } else {

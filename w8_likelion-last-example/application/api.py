@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
-from application import app
+from application import app, db
 from pusher import Pusher
-from flask import request, jsonify, session
+from flask import request, jsonify, session, g
 from user_info import PUSHER_APP_ID, PUSHER_KEY, PUSHER_SECRET
+from werkzeug.security import generate_password_hash, \
+    check_password_hash
+from models import (
+    User
+)
+from functools import wraps
 
 p = Pusher(
     app_id=PUSHER_APP_ID,
@@ -10,15 +16,13 @@ p = Pusher(
     secret=PUSHER_SECRET
 )
 
-# from flask import Flask
-# appppp = Flask(__name__)
-# appppp.secret_key = '42'
 
 @app.route('/api/echo', methods=["GET", "POST"])
 def test_message():
     data = request.form
     p['test_channel'].trigger('echo', {'message': data['message']})
     return jsonify({"status": 0})
+
 
 def emit(action, data, broadcast=False):
     if broadcast:
@@ -27,23 +31,59 @@ def emit(action, data, broadcast=False):
         p['private'].trigger(action, data)
 
         
-@app.route('/api/start', methods=["POST"])
-def api_start():
+# @app.route('/api/start', methods=["POST"])
+# def api_start():
+@app.route('/api/trylogin',methods=["POST"])
+def api_trylogin():
+    print "asdfasdf"
     data = request.form
     username = data['username']
+    password = data['password']
     user_id = data['user_id']
+    
+    user = User.query.get(username)
+    print "asdfaedf"
+    if user is None:
+        print username
+        print password
+        user = User(nickname=username,
+                     password=generate_password_hash(password)
+                     )
+        db.session.add(user)
+        db.session.commit()
+    elif not check_password_hash(user.password, password):
+        return jsonify({'status': -1, 'message': 'wrong password'})
+    else:
+        print "user fount"
 
     session['username'] = username
     session['user_id'] = user_id
-
+ 
     emit('user_joined', {
         'username': username,
         }, broadcast=True)
 
     return jsonify({"status": 0})
 
-    
+
+@app.before_request
+def app_before_request():
+    g.user = None
+    if 'username' in session:
+        g.user = session['username']
+
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if g.user is None:
+            return jsonify({"status": -1, "message": "not logged in"})
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 @app.route('/api/call/<action_name>',methods=["POST"])
+@login_required
 def api_call(action_name):
     data = request.form
 

@@ -30,7 +30,7 @@ $(function() {
 
 	for (var i = 0; i < 10; i++)
 	    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
+	window.console.log(text);
 	return text;
     })();
 

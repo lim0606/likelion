@@ -1,0 +1,8 @@
+# copy this file to user_info.py
+# and fill the value
+
+ADMIN_EMAIL = lim0606@gmail.com
+ADMIN_DB_URI =  'mysql+gaerdbms:///blog?instance=jhlim-likelion:w6-starter'
+
+PUSHER_APP_ID
+PUSHER_KEY = 

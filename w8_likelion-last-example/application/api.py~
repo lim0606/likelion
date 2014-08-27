@@ -10,6 +10,9 @@ p = Pusher(
     secret=PUSHER_SECRET
 )
 
+# from flask import Flask
+# appppp = Flask(__name__)
+# appppp.secret_key = '42'
 
 @app.route('/api/echo', methods=["GET", "POST"])
 def test_message():
