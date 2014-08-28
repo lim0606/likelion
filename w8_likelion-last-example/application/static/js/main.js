@@ -6,6 +6,41 @@ Pusher.log = function(message) {
     }
 };
 */
+
+function toggleGlobalLoadingIndicator() {
+    var spinner_el = $(".spinner");
+    
+    if (spinner_el.length == 0) {
+	var opts = {
+	    lines: 13, // The number of lines to draw
+	    length: 20, // The length of each line
+	    width: 10, // The line thickness
+	    radius: 30, // The radius of the inner circle
+	    corners: 1, // Corner roundness (0..1)
+	    rotate: 0, // The rotation offset
+	    direction: 1, // 1: clockwise, -1: counterclockwise
+	    color: '#000', // #rgb or #rrggbb or array of colors
+	    speed: 1, // Rounds per second
+	    trail: 60, // Afterglow percentage
+	    shadow: false, // Whether to render a shadow
+	    hwaccel: false, // Whether to use hardware accel
+	    className: 'spinner', // The CSS class to assign to the spinner
+	    zIndex: 2e9, // The z-index (default to 2000000000)
+	    top: '50%', // Top position relative to parent
+	    left: '50%' // Left position relative to parent
+	};
+	// window.console.log("opts success!");
+	
+	$("body").prepend("<div id='spinner-container' style='position: fixed; top: 0; right: 0; bottom: 0; z-index:9999; overflow: hidden; outline: 0; color: #333; background-color: gray; opacity: 0.8;'></div>");
+	// window.console.log("prepend success!");
+	
+	var spinner = new Spinner(opts).spin($("#spinner-container")[0]);
+	// window.console.log("spinner object!");
+    } else {
+	$("#spinner-container").toggleClass("display-none");
+    }
+}
+
 $(function() {
     // var pusher = new Pusher(PUSHER_KEY),
     // 	testChannel = pusher.subscribe('test_channel'),
@@ -16,7 +51,7 @@ $(function() {
         $passwordInput = $('.usernameInput[name=password]'),
 	$messages = $('.messages'), // new jQuery object having class 'messages'
         $inputMessage = $('.inputMessage'),
-	$loginPage = $('.login.page');
+	$loginPage = $('.login.page'),
         $chatPage = $('.chat.page');
 
     // var username;
@@ -37,16 +72,14 @@ $(function() {
 
     $usernameInput.focus();
     
-    /*
-    //$.post는 아래의 형태와 같습니다. 
-    $.ajax({
-        type: "POST",
-	url: url,
-	data: data, 
-	success: success,
-	dataType: dataType
-    });
-    */
+    // //$.post는 아래의 형태와 같습니다. 
+    // $.ajax({
+    //     type: "POST",
+    // 	url: url,
+    // 	data: data, 
+    // 	success: success,
+    // 	dataType: dataType
+    // });
     
     // broadcast.bind('new_message', function(data) {
     // 	// data['username'] = "Dongwoo";
@@ -54,6 +87,9 @@ $(function() {
     // });
 
     function startPusher() {
+	window.console.log("pusherkey!!!")
+	window.console.log(PUSHER_KEY);
+	
 	var pusher = new Pusher(PUSHER_KEY),
 	    testChannel = pusher.subscribe('test_channel'),
 	    broadcast = pusher.subscribe('br');
@@ -138,11 +174,13 @@ $(function() {
     function setUsername() {
 	var __username = $usernameInput.val().trim();
 	var __password = $passwordInput.val().trim();
-	
+	window.console.log("asdfasdf!!asdf");
 	// If the username is valid
 	if (__username && __password) {
-	    $.post("/api/trylogin", {
-		'username': __username,
+	    toggleGlobalLoadingIndicator();
+	    window.console.log("whatthe!!");
+	    var setuser_post = $.post("/api/trylogin", {
+		'username': __username, 
 		'password': __password,
 		'user_id': user_id,
 	    }, function(data) {
@@ -162,7 +200,12 @@ $(function() {
 		    alert("fail to login");
 		}
 	    }, "json"
-          );
+		  );//.always(funtion() {
+	      // toggleGlobalLoadingIndicator();
+	      //});
+	    setuser_post.always(function() {
+		toggleGlobalLoadingIndicator();
+	    });
 	}
     }
     
@@ -221,3 +264,4 @@ $(function() {
 	updateTyping();
     });
 });
+

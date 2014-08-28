@@ -6,6 +6,35 @@ Pusher.log = function(message) {
     }
 };
 */
+
+function toggleGlobalLoadingIndicator() {
+    var spinner_el = $(".spinner");
+    if (spinner_el.length == 0) {
+	var opts = {
+	    lines: 13, // The number of lines to draw
+	    length: 20, // The length of each line
+	    width: 10, // The line thickness
+	    radius: 30, // The radius of the inner circle
+	    corners: 1, // Corner roundness (0..1)
+	    rotate: 0, // The rotation offset
+	    direction: 1, // 1: clockwise, -1: counterclockwise
+	    color: '#000', // #rgb or #rrggbb or array of colors
+	    speed: 1, // Rounds per second
+	    trail: 60, // Afterglow percentage
+	    shadow: false, // Whether to render a shadow
+	    hwaccel: false, // Whether to use hardware accel
+	    className: 'spinner', // The CSS class to assign to the spinner
+	    zIndex: 2e9, // The z-index (default to 2000000000)
+	    top: '50%', // Top position relative to parent
+	    left: '50%' // Left position relative to parent
+	};
+	$("body").prepend("<div id='spinner-container' style='position: fixed; top: 0; right: 0; bottom: 0; z-index:9999; overflow: hidden; outline: 0; color:#333; background-color: gray; opacity: 0.8;'></div>");
+	var spinner = new Spinner(opts).spin($("#spinner-container")[0]);
+    } else {
+	$("#spinner-container").toggleClass("display-none");
+    }
+}
+
 $(function() {
     // var pusher = new Pusher(PUSHER_KEY),
     // 	testChannel = pusher.subscribe('test_channel'),
@@ -13,9 +42,10 @@ $(function() {
     // 	$window = $(window),
     var $window = $(window),
 	$usernameInput = $('.usernameInput[name=username]'),
+        $passwordInput = $('.usernameInput[name=password]'),
 	$messages = $('.messages'), // new jQuery object having class 'messages'
         $inputMessage = $('.inputMessage'),
-	$loginPage = $('.login.page');
+	$loginPage = $('.login.page'),
         $chatPage = $('.chat.page');
 
     // var username;
@@ -120,7 +150,7 @@ $(function() {
 	return "hsl(" + index + ", 77%, 60%)";
     }
 
-    function sendMessage () {
+    function sendMessage() {
 	var message = $inputMessage.val().trim();
 
 	// if ther is a non-empty message
@@ -136,19 +166,20 @@ $(function() {
 
     function setUsername() {
 	var __username = $usernameInput.val().trim();
-
+	var __password = $passwordInput.val().trim();
+	window.console.log("asdfasdf!!asdf");
 	// If the username is valid
-	if (__username) {
-	    // username = __username;
-	    // $loginPage.fadeOut();
-	    // $chatPage.show();
-	    // $inputMessage.focus();
-	    $.post("/api/start", {
-		'username': __username,
+	if (__username && __password) {
+	    toggleGlobalLoadingIndicator();
+	    window.console.log("whatthe!!");
+	    var setuser_post = $.post("/api/trylogin", {
+		'username': __username, 
+		'password': __password,
 		'user_id': user_id,
 	    }, function(data) {
 		if (data.status == 0) {
 		    username = __username;
+		    window.console.log(__username); 
 		    $loginPage.fadeOut();
 		    $chatPage.show();
 		    $inputMessage.focus();
@@ -159,10 +190,15 @@ $(function() {
 		    var message = "Welcome to Chat &mdash; ";
 		    log(message);
 		} else {
-		    alert("error");
+		    alert("fail to login");
 		}
 	    }, "json"
-          );
+		  );/*.always(funtion() {
+	      // toggleGlobalLoadingIndicator();
+	      });*/
+	    setuser_post.always(function() {
+		toggleGlobalLoadingIndicator();
+	    });
 	}
     }
     
@@ -208,7 +244,6 @@ $(function() {
     $window.keydown(function(event) {
 	// When the client has ENTER on their keyboard
 	if (event.which == 13) {
-	    // sendMessage();
 	    if (username) {
 		sendMessage();
 	    } else {
