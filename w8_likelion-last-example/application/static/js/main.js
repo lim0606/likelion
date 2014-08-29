@@ -9,6 +9,8 @@ Pusher.log = function(message) {
 
 function toggleGlobalLoadingIndicator() {
     var spinner_el = $(".spinner");
+
+    // window.console.log("toggleGlobalLoading");
     
     if (spinner_el.length == 0) {
 	var opts = {
@@ -31,7 +33,7 @@ function toggleGlobalLoadingIndicator() {
 	};
 	// window.console.log("opts success!");
 	
-	$("body").prepend("<div id='spinner-container' style='position: fixed; top: 0; right: 0; bottom: 0; z-index:9999; overflow: hidden; outline: 0; color: #333; background-color: gray; opacity: 0.8;'></div>");
+	$("body").prepend("<div id='spinner-container' style='position: fixed; top: 0; right: 0; left: 0; bottom: 0; z-index:9999; overflow: hidden; outline: 0; color: #333; background-color: gray; opacity: 0.8;'></div>");
 	// window.console.log("prepend success!");
 	
 	var spinner = new Spinner(opts).spin($("#spinner-container")[0]);
@@ -66,7 +68,7 @@ $(function() {
 
 	for (var i = 0; i < 10; i++)
 	    text += possible.charAt(Math.floor(Math.random() * possible.length));
-	window.console.log(text);
+	// window.console.log(text);
 	return text;
     })();
 
@@ -87,8 +89,8 @@ $(function() {
     // });
 
     function startPusher() {
-	window.console.log("pusherkey!!!")
-	window.console.log(PUSHER_KEY);
+	// window.console.log("pusherkey!!!")
+	// window.console.log(PUSHER_KEY);
 	
 	var pusher = new Pusher(PUSHER_KEY),
 	    testChannel = pusher.subscribe('test_channel'),
@@ -174,11 +176,11 @@ $(function() {
     function setUsername() {
 	var __username = $usernameInput.val().trim();
 	var __password = $passwordInput.val().trim();
-	window.console.log("asdfasdf!!asdf");
+	// window.console.log("asdfasdf!!asdf");
 	// If the username is valid
 	if (__username && __password) {
 	    toggleGlobalLoadingIndicator();
-	    window.console.log("whatthe!!");
+	    // window.console.log("whatthe!!");
 	    var setuser_post = $.post("/api/trylogin", {
 		'username': __username, 
 		'password': __password,
@@ -186,7 +188,7 @@ $(function() {
 	    }, function(data) {
 		if (data.status == 0) {
 		    username = __username;
-		    window.console.log(__username); 
+		    // window.console.log(__username); 
 		    $loginPage.fadeOut();
 		    $chatPage.show();
 		    $inputMessage.focus();
