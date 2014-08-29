@@ -26,6 +26,14 @@ handlers:
   static_files: application/static/robots.txt
   upload: application/static/robots.txt
 
+- url: /static/css
+  static_dir: application/static/css
+  mime_type: "text/css"
+
+- url: /static/js
+  static_dir: application/static/js
+  mime_type: "application/javascript"
+
 - url: /static
   static_dir: application/static
 
