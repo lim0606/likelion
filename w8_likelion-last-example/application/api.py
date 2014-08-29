@@ -9,7 +9,7 @@ from models import (
     User
 )
 from functools import wraps
-
+import time
 
 p = Pusher(
     app_id=PUSHER_APP_ID,
@@ -18,6 +18,27 @@ p = Pusher(
 )
 
 
+current_user = {}
+
+
+def mark_online(username):
+    now = int(time.time())
+    current_user[username] = now
+
+    
+def expiring_users():
+    now = int(time.time())
+    for key in current_user.keys():
+        if now - current_user[key] > 10:
+            current_user.pop(key)
+
+
+def get_current_users():
+    expiring_users()
+    
+    return list(current_user)
+
+            
 @app.route('/api/echo', methods=["GET", "POST"])
 def test_message():
     data = request.form
@@ -36,14 +57,14 @@ def emit(action, data, broadcast=False):
 # def api_start():
 @app.route('/api/trylogin',methods=["POST"])
 def api_trylogin():
-    print "asdfasdf"
+    # print "asdfasdf"
     data = request.form
     username = data['username']
     password = data['password']
     user_id = data['user_id']
     
     user = User.query.get(username)
-    print "asdfaedf"
+    # print "asdfaedf"
     if user is None:
         print username
         print password
@@ -59,18 +80,23 @@ def api_trylogin():
 
     session['username'] = username
     session['user_id'] = user_id
- 
+    mark_online(username)
+    
     emit('user_joined', {
         'username': username,
         }, broadcast=True)
 
-    return jsonify({"status": 0})
+    return jsonify({
+        "status": 0,
+        "user_list": get_current_users(),
+    })
 
 
 @app.before_request
 def app_before_request():
     g.user = None
     if 'username' in session:
+        mark_online(session['username'])
         g.user = session['username']
 
 

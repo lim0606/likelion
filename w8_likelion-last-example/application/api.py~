@@ -10,6 +10,7 @@ from models import (
 )
 from functools import wraps
 
+
 p = Pusher(
     app_id=PUSHER_APP_ID,
     key=PUSHER_KEY,

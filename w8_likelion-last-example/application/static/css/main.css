@@ -46,48 +46,63 @@ ul {
 /* Login Page */
 
 .login.page {
-    background-color: #000;
+  background-color: #000;
 }
 
 .login.page .form {
-    height: 100px;
-    margin-top: -185px;
-    position: absolute;
+  height: 100px;
+  margin-top: -185px;
+  position: absolute;
 
-    text-align: center;
-    top: 50%;
-    width: 100%;
+  text-align: center;
+  top: 50%;
+  width: 100%;
 }
 
 .login.page .form .usernameInput {
-    background-color: transparent;
-    border: none;
-    border-bottom: 2px solid #fff;
-    outline: none;
-    padding-bottom: 15px;
-    text-align: center;
-    width: 400px;
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #fff;
+  outline: none;
+  padding-bottom: 15px;
+  text-align: center;
+  width: 400px;
 }
 
 .login.page .title {
-    font-size: 200%
+  font-size: 200%;
 }
 
 .login.page .usernameInput {
-    font-size: 200%;
-    letter-spacing: 3px;
+  font-size: 200%;
+  letter-spacing: 3px;
 }
 
 .login.page .title, .login.page .usernameInput {
-    color: #fff;
-    font-weight: 100;
+  color: #fff;
+  font-weight: 100;
 }
 
 /* Chat page */
 
 .chat.page {
-    display: none;
-}    
+  display: none;
+}
+
+/* User area */
+
+.user-area {
+  height: 100%;
+  padding-bottom: 60px;
+  position: fixed;
+  right: 0;
+  width: 150px;
+}
+
+.user-area > ul {
+  padding: 10px;
+  list-style: initial;
+}
 
 /* Font */
 
@@ -100,10 +115,10 @@ ul {
 }
 
 .log {
-    color: gray;
-    font-size: 70%;
-    margin: 5px;
-    text-align: center;
+  color: gray;
+  font-size: 70%;
+  margin: 5px;
+  text-align: center;
 }
 
 /* Messages */
@@ -111,6 +126,9 @@ ul {
 .chatArea {
   height: 100%;
   padding-bottom: 60px;
+  right: 150px;
+  position: fixed;
+  left: 0;
 }
 
 .messages {
@@ -142,5 +160,5 @@ ul {
 }
 
 .display-none {
-    display: none;
+  display:none;
 }
